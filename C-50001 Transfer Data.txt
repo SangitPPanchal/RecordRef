@@ -1,0 +1,92 @@
+OBJECT Table 50001 Data Transfer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=04/17/19;
+    Time=12:31:55 PM;
+    Modified=Yes;
+    Version List=TBS20;
+  }
+OBJECT Codeunit 50001 Transfer Data
+{
+  OBJECT-PROPERTIES
+  {
+    Date=04/17/19;
+    Time=[ 5:39:44 PM];
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+            DataTransfer.RESET;
+            IF DataTransfer.FINDSET THEN BEGIN
+              REPEAT
+                TransferData(DataTransfer."From Table ID",DataTransfer."To Table ID");
+              UNTIL DataTransfer.NEXT =0;
+            END;
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      RecordRef1@1000 : RecordRef;
+      RecordRef2@1001 : RecordRef;
+      Text000@1002 : TextConst 'ENU=RecordRef1 refers to the %1 table.\ RecordRef2 refers to the %2 table';
+      ILE@1003 : Record 32;
+      DataTransfer@1004 : Record 50001;
+      Field@1005 : Record 2000000041;
+      FieldRefTo@1006 : FieldRef;
+      FieldRefFrom@1007 : FieldRef;
+      ItemLedgerEntry2@1008 : Record 50002;
+      FldRef@1010 : FieldRef;
+      Test@1011 : Text;
+      "---*"@1009 : Integer;
+      RecRef@1014 : RecordRef;
+      I@1012 : Integer;
+      FldRef2@1013 : FieldRef;
+      Window@1015 : Dialog;
+      NoOfRecs@1016 : Integer;
+      CurrRec@1017 : Integer;
+
+    PROCEDURE TransferData@4(FromTableID@1000 : Integer;TotableID@1001 : Integer);
+    VAR
+      RecRef@1002 : RecordRef;
+      Field@1003 : Record 2000000041;
+      I@1004 : Integer;
+    BEGIN
+      RecRef.OPEN(FromTableID);
+      RecordRef2.OPEN(TotableID);
+      RecordRef2.INIT;
+      IF RecRef.FINDSET THEN BEGIN
+        Window.OPEN('Transferring Data:\##1######################'
+                     +'From: #2############\'
+                     +'To:   #3############\');
+          REPEAT
+           SLEEP(10);
+           Window.UPDATE(2,RecRef.CAPTION);
+           Window.UPDATE(3,RecordRef2.CAPTION);
+            Field.RESET;
+            Field.SETRANGE(TableNo,FromTableID);
+            Field.SETRANGE(Class,Field.Class::Normal);
+            IF Field.FINDSET THEN BEGIN
+              REPEAT
+                FldRef := RecRef.FIELD(Field."No.");
+                FldRef2 := RecordRef2.FIELD(Field."No.");
+                FldRef2.VALUE := FldRef.VALUE;
+          UNTIL Field.NEXT=0;
+          RecordRef2.INSERT;
+          END;
+        UNTIL RecRef.NEXT=0;
+      Window.CLOSE;
+      END;
+      RecRef.CLOSE;
+      RecordRef2.CLOSE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

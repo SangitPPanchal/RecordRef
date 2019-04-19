@@ -1,0 +1,41 @@
+OBJECT Table 50001 Data Transfer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=04/17/19;
+    Time=12:31:55 PM;
+    Modified=Yes;
+    Version List=TBS20;
+  }
+  PROPERTIES
+  {
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;AutoIncrement=Yes;
+                                                   DataClassification=ToBeClassified }
+    { 2   ;   ;From Table ID       ;Integer       ;TableRelation=Object.ID WHERE (Type=CONST(Table));
+                                                   DataClassification=ToBeClassified }
+    { 3   ;   ;To Table ID         ;Integer       ;TableRelation=Object.ID WHERE (Type=CONST(Table));
+                                                   DataClassification=ToBeClassified }
+    { 21  ;   ;From Table Name     ;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Object.Name WHERE (ID=FIELD(From Table ID)));
+                                                   Editable=No }
+    { 22  ;   ;To Table Name       ;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Object.Name WHERE (ID=FIELD(To Table ID)));
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Entry No.,From Table ID,To Table ID     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
